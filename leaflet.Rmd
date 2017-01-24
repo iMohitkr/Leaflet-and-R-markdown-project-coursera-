@@ -1,0 +1,56 @@
+---
+title: "Leaflet project"
+author: "Mohit Kumar"
+date: "24 January 2017"
+output: html_document
+keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache = TRUE)
+```
+
+
+```{r}
+library(leaflet)
+
+```
+
+Here, I am going to project the population data of various cities in my country INDIA onto the leaflet maps. Data was acquired from [Free World Cities Database](http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz)
+```{r}
+
+#read the database
+cities<-read.csv("worldcitiespop.txt",nrows = 39813,skip = 1321832,header = FALSE)
+
+#make column names meaningful
+coln<-read.csv("worldcitiespop.txt",nrows = 1,header = FALSE)
+coln<-sapply(coln,as.character)
+colnames(cities)<-coln
+
+#omit na values
+cities<-na.omit(cities)
+
+```
+
+```{r}
+#prepare data for pop display
+content <- paste(sep = "<br/>",paste("<center><b>",toupper(cities$City),"</b></center>"),paste("Population:",cities$Population)
+)
+
+```
+
+```{r}
+
+#printing the dataset onto the map
+leaflet(cities) %>% addTiles() %>%
+  addCircles(lng = ~Longitude, lat = ~Latitude, weight = 1,
+    radius = ~sqrt(Population) * 4, popup = content
+  )
+
+```
+
+
+
+
+
+
